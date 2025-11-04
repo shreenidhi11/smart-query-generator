@@ -9,10 +9,10 @@ from pydantic import BaseModel
 
 class Form(BaseModel):
     jobTitle: str
-    fullTime: bool
-    partTime: bool
-    contract: bool
-    internship: bool
+    fullTime: bool = False
+    partTime: bool = False
+    contract: bool = False
+    internship: bool = False
 
 app = FastAPI()
 
@@ -92,19 +92,21 @@ def build_boolean_queries(main_title):
 
 @app.post("/data")
 async def generate_smart_queries(form: Form):
-    # form is automatically parsed and validated by FastAPI
-    print(form)
-    print(form.dict())  # converts the Pydantic model to a Python dict
     jobTitle = form.jobTitle
-    fullTime = form.fullTime or False
-    partTime = form.partTime or False
-    contract = form.contract or False
-    internship = form.internship or False
-    build_boolean_queries(jobTitle)
-    # You can now use form.jobTitle, form.fullTime, etc.
+    fullTime = form.fullTime
+    partTime = form.partTime
+    contract = form.contract
+    internship = form.internship
+
+    # Just a debug log
+    print(f"Received: {form.dict()}")
+
+    # You can add logic later to modify queries based on the flags above.
+    queries = build_boolean_queries(jobTitle)
+
     return {
         "message": "Form received successfully!",
-        "data": build_boolean_queries(jobTitle)
+        "data": queries
     }
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

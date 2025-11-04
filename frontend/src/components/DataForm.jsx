@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // import Results from "./Results";
+import "./DataForm.css";
 
 function DataForm() {
   const [inputs, setInputs] = useState({});
@@ -26,64 +27,73 @@ function DataForm() {
     setqueryArray(result.data);
   };
 
+  const openLinkedIn = (query) => {
+    const encoded = encodeURIComponent(query);
+    window.open(
+      `https://www.linkedin.com/search/results/content/?keywords=${encoded}&origin=FACETED_SEARCH&sortBy=%22date_posted%22`,
+      "_blank"
+    );
+  };
+  // https://www.linkedin.com/search/results/all/?keywords=(%22Javascript%20Developer%22)%20AND%20%22hiring%22&origin=GLOBAL_SEARCH_HEADER&sid=ZL5
+// https://www.linkedin.com/search/results/content/?keywords=%22Python%20Developer%22%20AND%20(%22hiring%22%20OR%20%22recruiting%22%20OR%20%22join%20our%20team%22%20OR%20%22looking%20for%22)&origin=FACETED_SEARCH&sid=qHW&sortBy=%22date_posted%22
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Enter your name:
+    <div className="container">
+      <h2 className="title">Smart Job Query Generator</h2>
+      <form onSubmit={handleSubmit} className="form">
+        <div className="input-group">
+          <label>Enter job title:</label>
           <input
             type="text"
             name="jobTitle"
             value={inputs.jobTitle || ""}
             onChange={handleChange}
+            placeholder="e.g. Software Engineer"
           />
-        </label>
-        {/* <p>Current value: {jobTitle}</p> */}
+        </div>
 
-        <label>
-          Full Time:
-          <input
-            type="checkbox"
-            name="fullTime"
-            checked={inputs.fullTime || false}
-            onChange={handleChange}
-          />
-        </label>
+        <div className="checkbox-group">
+          {["fullTime", "partTime", "contract", "internship"].map((type) => (
+            <label key={type}>
+              <input
+                type="checkbox"
+                name={type}
+                checked={inputs[type] || false}
+                onChange={handleChange}
+              />
+              {type.charAt(0).toUpperCase() +
+                type.slice(1).replace("Time", " Time")}
+            </label>
+          ))}
+        </div>
 
-        <label>
-          Part Time:
-          <input
-            type="checkbox"
-            name="partTime"
-            checked={inputs.partTime || false}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Contract Time:
-          <input
-            type="checkbox"
-            name="contract"
-            checked={inputs.contract || false}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Intern:
-          <input
-            type="checkbox"
-            name="internship"
-            checked={inputs.internship || false}
-            onChange={handleChange}
-          />
-        </label>
-        <button type="submit">Submit</button>
+        <button type="submit" className="btn-primary">
+          Generate Queries
+        </button>
       </form>
-      {queryArray.length > 0 &&
-        queryArray.map((value, index) => <p key={index}>{value}</p>)}
-    </>
+
+      <div className="results">
+        {queryArray.length > 0 &&
+          queryArray.map((value, index) => (
+            <div key={index} className="query-item">
+              <p className="query-text">{value}</p>
+              <div className="button-group">
+                <button
+                  className="btn-secondary"
+                  onClick={() => navigator.clipboard.writeText(value)}
+                >
+                  Copy
+                </button>
+                <button
+                  className="btn-linkedin"
+                  onClick={() => openLinkedIn(value)}
+                >
+                  Go to LinkedIn
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
   );
 }
 
