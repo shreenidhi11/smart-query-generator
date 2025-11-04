@@ -1,3 +1,18 @@
+/* App.css */
+.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.dark {
+  --bg-color: #121212;
+  --text-color: #f1f1f1;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
 .container {
   max-width: 800px;
   margin: 2rem auto;
@@ -28,7 +43,7 @@
 }
 
 .input-group input {
-  width: 100%;
+  width: 97%;
   padding: 0.6rem 0.8rem;
   border: 1px solid #cbd5e0;
   border-radius: 8px;
