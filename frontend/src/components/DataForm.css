@@ -87,7 +87,8 @@
 }
 
 .btn-secondary,
-.btn-linkedin {
+.btn-linkedin,
+.btn-google {
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
   border: none;
@@ -112,3 +113,12 @@
 .btn-linkedin:hover {
   background-color: #005f8d;
 }
+
+.btn-google {
+  background-color: #88BDF2;
+  color: white;
+}
+
+/* .btn-google:hover {
+  background-color: #a4c8db;
+} */

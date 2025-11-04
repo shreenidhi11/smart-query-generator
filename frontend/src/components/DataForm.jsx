@@ -34,8 +34,14 @@ function DataForm() {
       "_blank"
     );
   };
-  // https://www.linkedin.com/search/results/all/?keywords=(%22Javascript%20Developer%22)%20AND%20%22hiring%22&origin=GLOBAL_SEARCH_HEADER&sid=ZL5
-// https://www.linkedin.com/search/results/content/?keywords=%22Python%20Developer%22%20AND%20(%22hiring%22%20OR%20%22recruiting%22%20OR%20%22join%20our%20team%22%20OR%20%22looking%20for%22)&origin=FACETED_SEARCH&sid=qHW&sortBy=%22date_posted%22
+
+  const openGoogle = (query) => {
+    const encoded = encodeURIComponent(query);
+    window.open(
+      `https://www.google.com/search?q=${encoded}&tbs=qdr:d`,
+      "_blank"
+    );
+  };
   return (
     <div className="container">
       <h2 className="title">Smart Job Query Generator</h2>
@@ -88,6 +94,12 @@ function DataForm() {
                   onClick={() => openLinkedIn(value)}
                 >
                   Go to LinkedIn
+                </button>
+                <button
+                  className="btn-google"
+                  onClick={() => openGoogle(value)}
+                >
+                  Go to Google
                 </button>
               </div>
             </div>
