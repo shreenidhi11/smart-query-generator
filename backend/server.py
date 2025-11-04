@@ -96,10 +96,10 @@ async def generate_smart_queries(form: Form):
     print(form)
     print(form.dict())  # converts the Pydantic model to a Python dict
     jobTitle = form.jobTitle
-    fullTime = form.fullTime
-    partTime = form.partTime
-    contract = form.contract
-    internship = form.internship
+    fullTime = form.fullTime or False
+    partTime = form.partTime or False
+    contract = form.contract or False
+    internship = form.internship or False
     build_boolean_queries(jobTitle)
     # You can now use form.jobTitle, form.fullTime, etc.
     return {
