@@ -25,4 +25,4 @@ Technologies Used:
     •	ReactJS - For User Interface
     •	Redis docker container - For caching similar or same user queries
 
-<img width="1118" height="911" alt="Image" src="https://github.com/user-attachments/assets/1b749af4-003a-4df5-903b-4c5dbffe0186" />
+<img width="814" height="886" alt="Image" src="https://github.com/user-attachments/assets/786eec2b-1e67-4f73-a307-d45f02cd7aa7" />
