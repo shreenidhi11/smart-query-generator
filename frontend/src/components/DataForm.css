@@ -137,3 +137,38 @@
 /* .btn-google:hover {
   background-color: #a4c8db;
 } */
+
+.alternate-titles {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.alt-title {
+  /* background-color: #e2e8f0; */
+  color: #333;
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+
+
+    background: #f7fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.alt-title:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+body.dark .alt-title {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+.suggestions{
+  text-align: center;
+}
