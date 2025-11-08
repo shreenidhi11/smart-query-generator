@@ -1,14 +1,19 @@
+from datetime import timedelta
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+import redis
+from redis.commands.search.field import VectorField, TextField
+# from redis.commands.search.index_definition import IndexDefinition, IndexType
+from redis.exceptions import ResponseError
 import io
 import os
 import json
+import hashlib
 import uvicorn
 import google.generativeai as genai
 from pydantic import BaseModel
 from dotenv import load_dotenv
-
-
 
 class Form(BaseModel):
     jobTitle: str
@@ -19,6 +24,8 @@ class Form(BaseModel):
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+CACHE_TTL = timedelta(hours=24)
+redis_client = redis.StrictRedis(host="localhost", port=6379, db=0, decode_responses=True)
 app = FastAPI()
 
 app.add_middleware(
@@ -63,6 +70,26 @@ ROLE_SYNONYMS = {
 }
 
 # -----utilities------
+#utility functions for redis access
+def get_synonyms(jobTitle):
+    '''
+    returns the synonyms for the given jobTitle
+    :param jobTitle: job title
+    :return: list of synonyms
+    '''
+    global redis_client
+    synonyms = []
+    jobTitle = jobTitle.strip().lower()
+#     first check in the redis server
+    cached_synonyms = redis_client.get(jobTitle)
+    if cached_synonyms:
+        synonyms = cached_synonyms
+        return json.loads(synonyms)
+    else:
+        synonyms = llm_call(jobTitle)
+        redis_client.setex(jobTitle, CACHE_TTL, json.dumps(synonyms))
+    return synonyms
+
 def llm_call(title):
     '''
     Calls the LLM for returning alternate names of the given job titles
@@ -80,7 +107,6 @@ def llm_call(title):
 
     results = [s.strip() for s in text.split(",") if s.strip()]
     return results
-
 
 def build_boolean_queries(main_title):
     """
@@ -143,18 +169,17 @@ async def generate_smart_queries(form: Form):
     internship = form.internship
 
     # Just a debug log
-    print(f"Received: {form.dict()}")
+    # print(f"Received: {form.dict()}")
 
     # You can add logic later to modify queries based on the flags above.
-    queries = build_boolean_queries(jobTitle)
+    queries = build_boolean_queries(jobTitle.lower())
 
     #send synonyms to the user to try other searches
-    alternate_job_titles =  ROLE_SYNONYMS[jobTitle.lower()] if jobTitle.lower() in ROLE_SYNONYMS else llm_call(jobTitle.lower())
-    # alternate_job_titles = ROLE_SYNONYMS[jobTitle.lower()]
-    if jobTitle.lower() not in ROLE_SYNONYMS:
-        ROLE_SYNONYMS[jobTitle.lower()] = alternate_job_titles
-    print(ROLE_SYNONYMS[jobTitle.lower()])
+    alternate_job_titles = get_synonyms(jobTitle.lower())
 
+    # alternate_job_titles =  ROLE_SYNONYMS[jobTitle.lower()] if jobTitle.lower() in ROLE_SYNONYMS else llm_call(jobTitle.lower())
+    # if jobTitle.lower() not in ROLE_SYNONYMS:
+    #     ROLE_SYNONYMS[jobTitle.lower()] = alternate_job_titles
 
     return {
         "message": "Form received successfully!",
