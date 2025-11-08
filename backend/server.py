@@ -4,7 +4,10 @@ import io
 import os
 import json
 import uvicorn
+import google.generativeai as genai
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
 
 
 class Form(BaseModel):
@@ -14,6 +17,8 @@ class Form(BaseModel):
     contract: bool = False
     internship: bool = False
 
+load_dotenv()
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
 app = FastAPI()
 
 app.add_middleware(
@@ -37,7 +42,46 @@ EXCLUSION_PHRASES = [
     "contract"
 ]
 
+ROLE_SYNONYMS = {
+  "software developer": [
+    "software engineer",
+    "backend engineer",
+    "full stack developer",
+    "application developer",
+  ],
+  "data scientist": [
+    "machine learning engineer",
+    "ai engineer",
+    "data analyst",
+    "research scientist",
+  ],
+  "systems engineer": [
+    "devops engineer",
+    "site reliability engineer",
+    "infrastructure engineer",
+  ]
+}
+
 # -----utilities------
+def llm_call(title):
+    '''
+    Calls the LLM for returning alternate names of the given job titles
+    :param title: title of the job
+    :return: list of alternate names
+    '''
+    prompt = f"""
+    Strictly list only 4 alternative professional job titles or synonyms that mean the same as '{title}'.
+    Focus on realistic variations used in job postings.
+    Output them as a comma-separated list.
+    """
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    response = model.generate_content(prompt)
+    text = response.text.strip()
+
+    results = [s.strip() for s in text.split(",") if s.strip()]
+    return results
+
+
 def build_boolean_queries(main_title):
     """
     Builds a *list* of short, safe queries that respect LinkedIn limits.
@@ -104,9 +148,18 @@ async def generate_smart_queries(form: Form):
     # You can add logic later to modify queries based on the flags above.
     queries = build_boolean_queries(jobTitle)
 
+    #send synonyms to the user to try other searches
+    alternate_job_titles =  ROLE_SYNONYMS[jobTitle.lower()] if jobTitle.lower() in ROLE_SYNONYMS else llm_call(jobTitle.lower())
+    # alternate_job_titles = ROLE_SYNONYMS[jobTitle.lower()]
+    if jobTitle.lower() not in ROLE_SYNONYMS:
+        ROLE_SYNONYMS[jobTitle.lower()] = alternate_job_titles
+    print(ROLE_SYNONYMS[jobTitle.lower()])
+
+
     return {
         "message": "Form received successfully!",
-        "data": queries
+        "data": queries,
+        "additional_job_titles": alternate_job_titles
     }
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

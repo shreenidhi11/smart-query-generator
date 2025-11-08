@@ -5,6 +5,7 @@ import "./DataForm.css";
 function DataForm() {
   const [inputs, setInputs] = useState({});
   const [queryArray, setqueryArray] = useState([]);
+  const [alternateTitles, setalternateTitles] = useState([]);
 
   const handleChange = (e) => {
     const target = e.target;
@@ -24,7 +25,9 @@ function DataForm() {
     const result = await response.json();
 
     console.log(result.data);
+    console.log(result.additional_job_titles);
     setqueryArray(result.data);
+    setalternateTitles(result.additional_job_titles);
   };
 
   const openLinkedIn = (query) => {
@@ -103,6 +106,16 @@ function DataForm() {
                 </button>
               </div>
             </div>
+          ))}
+      </div>
+      {alternateTitles.length > 0 && <p className="suggestions">Related Roles You Can Try</p>}
+      <div className="alternate-titles">
+        
+        {alternateTitles.length > 0 &&
+          alternateTitles.map((value, index) => (
+            <p key={index} className="alt-title">
+              {value}
+            </p>
           ))}
       </div>
     </div>
