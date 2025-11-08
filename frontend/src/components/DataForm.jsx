@@ -6,6 +6,7 @@ function DataForm() {
   const [inputs, setInputs] = useState({});
   const [queryArray, setqueryArray] = useState([]);
   const [alternateTitles, setalternateTitles] = useState([]);
+  const [loading, setloading] = useState(false);
 
   const handleChange = (e) => {
     const target = e.target;
@@ -17,6 +18,7 @@ function DataForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setloading(true);
     const response = await fetch("http://127.0.0.1:8000/data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,10 +26,11 @@ function DataForm() {
     });
     const result = await response.json();
 
-    console.log(result.data);
-    console.log(result.additional_job_titles);
+    // console.log(result.data);
+    // console.log(result.additional_job_titles);
     setqueryArray(result.data);
     setalternateTitles(result.additional_job_titles);
+    setloading(false);
   };
 
   const openLinkedIn = (query) => {
@@ -47,7 +50,8 @@ function DataForm() {
   };
   return (
     <div className="container">
-      <h2 className="title">Smart Job Query Generator</h2>
+      <h2 className="title">QueryCraft</h2>
+      <h2 className="title2">Job Query Optimizer</h2>
       <form onSubmit={handleSubmit} className="form">
         <div className="input-group">
           <label>Enter job title:</label>
@@ -81,7 +85,9 @@ function DataForm() {
       </form>
 
       <div className="results">
-        {queryArray.length > 0 &&
+        {loading && <p>Loading...</p>}
+        {!loading &&
+          queryArray.length > 0 &&
           queryArray.map((value, index) => (
             <div key={index} className="query-item">
               <p className="query-text">{value}</p>
@@ -108,10 +114,15 @@ function DataForm() {
             </div>
           ))}
       </div>
-      {alternateTitles.length > 0 && <p className="suggestions">Related Roles You Can Try</p>}
+      {/* {alternateTitles.length > 0 && (
+        <p className="suggestions">Related Roles You Can Try</p>
+      )} */}
+      {!loading && queryArray.length > 0 && (
+        <p className="suggestions">Explore Similar Jobs</p>
+      )}
       <div className="alternate-titles">
-        
-        {alternateTitles.length > 0 &&
+        {!loading &&
+          queryArray.length > 0 &&
           alternateTitles.map((value, index) => (
             <p key={index} className="alt-title">
               {value}
