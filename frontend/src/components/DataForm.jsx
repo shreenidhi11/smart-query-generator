@@ -64,7 +64,7 @@ function DataForm() {
           />
         </div>
 
-        <div className="checkbox-group">
+        {/* <div className="checkbox-group">
           {["fullTime", "partTime", "contract", "internship"].map((type) => (
             <label key={type}>
               <input
@@ -77,7 +77,7 @@ function DataForm() {
                 type.slice(1).replace("Time", " Time")}
             </label>
           ))}
-        </div>
+        </div> */}
 
         <button type="submit" className="btn-primary">
           Generate Queries

@@ -17,10 +17,10 @@ from dotenv import load_dotenv
 
 class Form(BaseModel):
     jobTitle: str
-    fullTime: bool = False
-    partTime: bool = False
-    contract: bool = False
-    internship: bool = False
+    # fullTime: bool = False
+    # partTime: bool = False
+    # contract: bool = False
+    # internship: bool = False
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GENAI_API_KEY"))
@@ -163,10 +163,10 @@ def build_boolean_queries(main_title):
 @app.post("/data")
 async def generate_smart_queries(form: Form):
     jobTitle = form.jobTitle
-    fullTime = form.fullTime
-    partTime = form.partTime
-    contract = form.contract
-    internship = form.internship
+    # fullTime = form.fullTime
+    # partTime = form.partTime
+    # contract = form.contract
+    # internship = form.internship
 
     # Just a debug log
     # print(f"Received: {form.dict()}")
