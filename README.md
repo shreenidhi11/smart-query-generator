@@ -29,4 +29,5 @@ System Architecture
 <img width="1215" height="559" alt="Image" src="https://github.com/user-attachments/assets/38fbd9ed-0b80-4b3e-84d1-73ddee25bc16" />
 
 System Output
-<img width="814" height="886" alt="Image" src="https://github.com/user-attachments/assets/786eec2b-1e67-4f73-a307-d45f02cd7aa7" />
+
+<img width="851" height="812" alt="Image" src="https://github.com/user-attachments/assets/18083a20-5fae-4078-830a-45962c21035c" />
